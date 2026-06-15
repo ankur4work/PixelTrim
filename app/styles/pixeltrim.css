@@ -1,0 +1,211 @@
+/* PixelTrim Brand Theme — Teal / Emerald */
+
+:root {
+  --pb-teal: #0D9488;
+  --pb-teal-dark: #0F766E;
+  --pb-teal-darker: #115E59;
+  --pb-teal-light: #CCFBF1;
+  --pb-teal-mid: #99F6E4;
+  --pb-accent: #06B6D4;
+  --pb-gradient: linear-gradient(135deg, #14B8A6 0%, #0D9488 55%, #0F766E 100%);
+  --pb-gradient-soft: linear-gradient(135deg, #ECFDF5 0%, #CCFBF1 100%);
+  --pb-ink: #0F172A;
+  --pb-muted: #64748B;
+  --pb-border: #E2E8F0;
+  --pb-radius: 14px;
+  --pb-shadow: 0 8px 24px rgba(13, 148, 136, 0.12);
+}
+
+/* ── Primary buttons ───────────────────────── */
+.Polaris-Button--variantPrimary {
+  background: var(--pb-gradient) !important;
+  border-color: var(--pb-teal) !important;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3) !important;
+}
+.Polaris-Button--variantPrimary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%) !important;
+  border-color: var(--pb-teal-dark) !important;
+}
+.Polaris-Button--variantPrimary:active:not(:disabled) {
+  background: linear-gradient(135deg, #0F766E 0%, #115E59 100%) !important;
+}
+
+/* ── Links ─────────────────────────────────── */
+.Polaris-Link {
+  color: var(--pb-teal) !important;
+}
+.Polaris-Link:hover {
+  color: var(--pb-teal-dark) !important;
+}
+
+/* ── Focus rings ───────────────────────────── */
+.Polaris-TextField__Input:focus {
+  border-color: var(--pb-teal) !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18) !important;
+}
+
+/* ── Checkboxes ────────────────────────────── */
+.Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop {
+  background: var(--pb-teal) !important;
+  border-color: var(--pb-teal) !important;
+}
+
+/* ── PixelTrim hero banner ──────────────────── */
+.pb-hero {
+  background: var(--pb-gradient);
+  border-radius: var(--pb-radius);
+  padding: 36px;
+  color: white;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--pb-shadow);
+}
+.pb-hero::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+.pb-hero h1 {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+  color: white;
+}
+.pb-hero p {
+  font-size: 15px;
+  opacity: 0.9;
+  margin: 0;
+  color: white;
+}
+
+/* ── Stat cards ─────────────────────────────── */
+.pb-stat-card {
+  background: white;
+  border: 1px solid var(--pb-border);
+  border-radius: 12px;
+  padding: 22px;
+  text-align: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.pb-stat-card:hover {
+  box-shadow: var(--pb-shadow);
+  transform: translateY(-2px);
+}
+.pb-stat-value {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--pb-teal);
+  margin: 0;
+}
+.pb-stat-label {
+  font-size: 13px;
+  color: var(--pb-muted);
+  margin: 4px 0 0 0;
+}
+
+/* ── Feature cards ──────────────────────────── */
+.pb-feature-card {
+  background: white;
+  border: 1px solid var(--pb-border);
+  border-radius: var(--pb-radius);
+  padding: 26px;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+  height: 100%;
+}
+.pb-feature-card:hover {
+  box-shadow: var(--pb-shadow);
+  border-color: var(--pb-teal-mid);
+  transform: translateY(-2px);
+}
+.pb-feature-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--pb-gradient-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+  margin-bottom: 14px;
+}
+.pb-feature-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pb-ink);
+  margin: 0 0 8px 0;
+}
+.pb-feature-desc {
+  font-size: 13px;
+  color: var(--pb-muted);
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+.pb-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px 0;
+}
+.pb-feature-list li {
+  font-size: 13px;
+  color: #334155;
+  padding: 3px 0;
+  padding-left: 20px;
+  position: relative;
+}
+.pb-feature-list li::before {
+  content: "✓";
+  color: var(--pb-teal);
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+/* ── Page header accent ──────────────────────── */
+.pb-page-header {
+  background: var(--pb-gradient-soft);
+  border: 1px solid var(--pb-teal-mid);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pb-page-header-icon {
+  font-size: 24px;
+}
+.pb-page-header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pb-teal-darker);
+  margin: 0;
+}
+.pb-page-header-sub {
+  font-size: 12px;
+  color: var(--pb-teal);
+  opacity: 0.85;
+  margin: 2px 0 0 0;
+}
+
+/* ── Step badges ────────────────────────────── */
+.pb-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--pb-gradient);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}

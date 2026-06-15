@@ -1,0 +1,32 @@
+name = "PixelTrim"
+client_id = "d9417e0798c9dc60bec245db38aaa730"
+application_url = "https://pixeltrim.solnix.store/"
+embedded = true
+
+
+[access_scopes]
+scopes = "write_products,write_files"
+
+[access.admin]
+direct_api_mode = "online"
+
+[auth]
+redirect_urls = [
+  "https://pixeltrim.solnix.store/auth/callback",
+  "https://pixeltrim.solnix.store/auth/shopify/callback",
+  "https://pixeltrim.solnix.store/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2026-04"
+
+[[webhooks.subscriptions]]
+topics = [ "app/uninstalled" ]
+compliance_topics = [ "customers/redact", "customers/data_request", "shop/redact" ]
+uri = "https://pixeltrim.solnix.store/webhooks/app/uninstalled"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = false

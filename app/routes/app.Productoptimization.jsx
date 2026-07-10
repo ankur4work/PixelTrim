@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useLoaderData, useFetcher, useRevalidator } from 'react-router';
 import { authenticate } from '../shopify.server';
+import { requireActivePlan } from '../billing.server';
 import {
   Page,
   Layout,
@@ -144,7 +145,8 @@ function countProcessed(product) {
 /* -------------------------------------------------------------------------- */
 
 export async function loader({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const url = new URL(request.url);
   const filter = url.searchParams.get('filter') || 'all';
   const sortBy = url.searchParams.get('sortBy') || 'score_asc';
@@ -579,7 +581,8 @@ async function optimizeBatch(admin, productId) {
 }
 
 export async function action({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const formData = await request.formData();
   const actionType = formData.get('actionType');
 

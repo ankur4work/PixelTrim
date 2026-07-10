@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useLoaderData, useSubmit, useNavigation, useActionData, useFetcher } from 'react-router';
 import { authenticate } from '../shopify.server';
+import { requireActivePlan } from '../billing.server';
 import { setDefaultResultOrder } from 'node:dns';
 import { 
   Page, 
@@ -111,7 +112,8 @@ const PRODUCTS_QUERY = `#graphql
 `;
 
 export async function loader({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
 
   try {
     // Page through the whole catalog (metadata only, so this stays fast).
@@ -169,7 +171,8 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const formData = await request.formData();
   const actionType = formData.get('actionType');
 

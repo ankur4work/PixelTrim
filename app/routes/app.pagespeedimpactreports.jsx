@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useLoaderData, useSubmit, useNavigation, useActionData } from 'react-router';
 import { authenticate } from '../shopify.server';
+import { requireActivePlan } from '../billing.server';
 import {
   Page,
   Layout,
@@ -147,6 +148,7 @@ function getOptimizationData(product) {
 
 export async function loader({ request }) {
   const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const url = new URL(request.url);
   const selectedPage = url.searchParams.get('page') || 'all';
 
@@ -262,7 +264,8 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
-  await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const formData = await request.formData();
   const actionType = formData.get('actionType');
 

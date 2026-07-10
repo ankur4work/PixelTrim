@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useLoaderData, useSubmit } from 'react-router';
 import { authenticate } from '../shopify.server';
+import { requireActivePlan } from '../billing.server';
 import {
   Page,
   Layout,
@@ -264,7 +265,8 @@ function processProductsData(products, timeRange) {
 }
 
 export async function loader({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const url = new URL(request.url);
   const timeRange = url.searchParams.get('timeRange') || '30days';
 
@@ -301,7 +303,8 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
+  await requireActivePlan(admin, session);
   const formData = await request.formData();
   const actionType = formData.get('actionType');
 

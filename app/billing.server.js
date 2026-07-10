@@ -69,9 +69,11 @@ export async function getBillingState(admin) {
 // (hasActivePlan === true): paying merchants — who navigate the app the most —
 // get instant page loads, while non-subscribers are always re-checked so the
 // moment they subscribe on Shopify's page and return, the app unlocks
-// instantly. A cancel relocks within BILLING_TTL_MS, which is fine.
+// instantly. A cancel relocks the app shell within BILLING_TTL_MS; paid
+// feature routes are gated by requireActivePlan (fresh, uncached) so they lock
+// on the very next request regardless of this cache.
 const billingCache = new Map(); // shop -> { state, expires }
-const BILLING_TTL_MS = 120 * 1000;
+const BILLING_TTL_MS = 30 * 1000;
 
 export async function getBillingStateCached(admin, shop) {
   if (shop) {
@@ -85,6 +87,20 @@ export async function getBillingStateCached(admin, shop) {
     } else {
       billingCache.delete(shop);
     }
+  }
+  return state;
+}
+
+// Server-side feature gate. Throws an App Bridge redirect to the hosted pricing
+// page when the shop has no ACTIVE subscription, so cancelled/unsubscribed
+// merchants cannot reach paid functionality even via direct navigation, a stale
+// client render, or a raw POST to a route action. Uses a FRESH (uncached) read
+// so a cancellation takes effect on the very next request — no stale window.
+// Call at the top of every feature route loader AND action.
+export async function requireActivePlan(admin, session) {
+  const state = await getBillingState(admin);
+  if (!state.hasActivePlan) {
+    throw appBridgeRedirect(managedPricingUrl(session.shop, state.appHandle));
   }
   return state;
 }

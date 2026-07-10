@@ -75,7 +75,19 @@ export async function getBillingState(admin) {
 // feature routes are gated by requireActivePlan (fresh, uncached) so they lock
 // on the very next request regardless of this cache.
 const billingCache = new Map(); // shop -> { state, expires }
-const BILLING_TTL_MS = 30 * 1000;
+const BILLING_TTL_MS = 10 * 1000;
+
+// Keep the per-shop cache coherent with a freshly-read state. Positive results
+// are cached (fast repeat loads for paying merchants); a negative result EVICTS
+// any stale positive so a cancellation is reflected on the next read.
+function writeBillingCache(shop, state) {
+  if (!shop) return;
+  if (state.hasActivePlan) {
+    billingCache.set(shop, { state, expires: Date.now() + BILLING_TTL_MS });
+  } else {
+    billingCache.delete(shop);
+  }
+}
 
 export async function getBillingStateCached(admin, shop) {
   if (shop) {
@@ -83,13 +95,7 @@ export async function getBillingStateCached(admin, shop) {
     if (hit && hit.expires > Date.now()) return hit.state;
   }
   const state = await getBillingState(admin);
-  if (shop) {
-    if (state.hasActivePlan) {
-      billingCache.set(shop, { state, expires: Date.now() + BILLING_TTL_MS });
-    } else {
-      billingCache.delete(shop);
-    }
-  }
+  writeBillingCache(shop, state);
   return state;
 }
 
@@ -110,6 +116,12 @@ export async function getBillingStateCached(admin, shop) {
 // is preserved so embedded params (host, shop, id_token) survive a full load.
 export async function requireActivePlan(admin, session, request) {
   const state = await getBillingState(admin);
+  // Write through to the shared cache. This is what makes the relock immediate:
+  // the parent /app loader reads via getBillingStateCached, so without this a
+  // stale positive (up to BILLING_TTL_MS old) would keep rendering the app shell
+  // after a cancel — the redirect below would just bounce back to a cached /app.
+  // Evicting here guarantees /app re-checks fresh and shows the pricing wall.
+  writeBillingCache(session?.shop, state);
   if (!state.hasActivePlan) {
     const search = request ? new URL(request.url).search : "";
     throw redirect(`/app${search}`);

@@ -1,3 +1,5 @@
+import { redirect } from "react-router";
+
 // Managed-pricing billing helpers.
 //
 // This app is a Shopify "Managed Pricing" app, so it CANNOT use the Billing API
@@ -97,10 +99,20 @@ export async function getBillingStateCached(admin, shop) {
 // client render, or a raw POST to a route action. Uses a FRESH (uncached) read
 // so a cancellation takes effect on the very next request — no stale window.
 // Call at the top of every feature route loader AND action.
-export async function requireActivePlan(admin, session) {
+//
+// On no active plan we redirect back to the app home (/app), where app.jsx
+// renders the in-app pricing wall. We deliberately do NOT use appBridgeRedirect
+// here: that returns a 401 + reauthorize header meant for LEAVING the iframe to
+// Shopify's hosted pricing page (the Subscribe button), and App Bridge doesn't
+// reliably intercept it when it's thrown from a loader during navigation —
+// which surfaced as a raw 401. A plain in-app redirect keeps the merchant
+// inside the embedded app and lands them on the pricing wall. The query string
+// is preserved so embedded params (host, shop, id_token) survive a full load.
+export async function requireActivePlan(admin, session, request) {
   const state = await getBillingState(admin);
   if (!state.hasActivePlan) {
-    throw appBridgeRedirect(managedPricingUrl(session.shop, state.appHandle));
+    const search = request ? new URL(request.url).search : "";
+    throw redirect(`/app${search}`);
   }
   return state;
 }

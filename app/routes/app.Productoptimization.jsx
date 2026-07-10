@@ -146,7 +146,7 @@ function countProcessed(product) {
 
 export async function loader({ request }) {
   const { admin, session } = await authenticate.admin(request);
-  await requireActivePlan(admin, session);
+  await requireActivePlan(admin, session, request);
   const url = new URL(request.url);
   const filter = url.searchParams.get('filter') || 'all';
   const sortBy = url.searchParams.get('sortBy') || 'score_asc';
@@ -582,7 +582,7 @@ async function optimizeBatch(admin, productId) {
 
 export async function action({ request }) {
   const { admin, session } = await authenticate.admin(request);
-  await requireActivePlan(admin, session);
+  await requireActivePlan(admin, session, request);
   const formData = await request.formData();
   const actionType = formData.get('actionType');
 

@@ -9,8 +9,8 @@
 
 // Central, env-overridable billing config — change price/trial without editing
 // code. Set these in your environment (e.g. Coolify / .env):
-//   BILLING_AMOUNT=60          monthly price shown in the app
-//   BILLING_AMOUNT_YEARLY=600  yearly price shown in the app
+//   BILLING_AMOUNT=30          monthly price shown in the app
+//   BILLING_AMOUNT_YEARLY=300  yearly price shown in the app
 //   BILLING_YEARLY_ENABLED=true  set to "false" to hide the yearly option
 //   BILLING_TRIAL_DAYS=0       free-trial length shown in the app (0 = no trial)
 //   BILLING_PLAN_NAME=Basic    plan name
@@ -24,8 +24,8 @@ export const BILLING_CONFIG = {
   planName: process.env.BILLING_PLAN_NAME || "Basic",
   currency: process.env.BILLING_CURRENCY || "USD",
   trialDays: Number(process.env.BILLING_TRIAL_DAYS ?? 0),
-  amount: Number(process.env.BILLING_AMOUNT ?? 60),
-  amountYearly: Number(process.env.BILLING_AMOUNT_YEARLY ?? 600),
+  amount: Number(process.env.BILLING_AMOUNT ?? 30),
+  amountYearly: Number(process.env.BILLING_AMOUNT_YEARLY ?? 300),
   yearlyEnabled: process.env.BILLING_YEARLY_ENABLED !== "false",
 };
 

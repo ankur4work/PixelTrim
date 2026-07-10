@@ -91,7 +91,7 @@ function PricingWall({ amount, amountYearly, yearlyEnabled, currency, trialDays 
   const price = isYearly ? amountYearly : amount;
   const unit = isYearly ? "/ yr" : "/ mo";
   const billingLine = isYearly ? "Billed yearly" : "Billed every 30 days";
-  // Months saved vs paying monthly for a year (e.g. 720 → 600 = 2 months free).
+  // Months saved vs paying monthly for a year (e.g. 360 → 300 = 2 months free).
   const monthsFree = amount > 0 ? Math.round((amount * 12 - amountYearly) / amount) : 0;
 
   // Posting to the /app action throws a 401 + reauthorize header; App Bridge
@@ -208,8 +208,8 @@ export default function App() {
           </>
         ) : (
           <PricingWall
-            amount={billing?.amount ?? 60}
-            amountYearly={billing?.amountYearly ?? 600}
+            amount={billing?.amount ?? 30}
+            amountYearly={billing?.amountYearly ?? 300}
             yearlyEnabled={billing?.yearlyEnabled ?? true}
             currency={billing?.currency ?? "USD"}
             trialDays={billing?.trialDays ?? 0}
